@@ -1,2 +1,10 @@
+filippo.io/edwards25519 v1.1.0 h1:FNf4tywRC1HmFuKW5xopWpigGjJKiJSV0Cqo0cJWDaA=
+filippo.io/edwards25519 v1.1.0/go.mod h1:BxyFTGdWcka3PhytdK4V28tE5sGfRvvvRV7EaN4VDT4=
+github.com/Dimoonevs/hls-parser v0.0.0-20250215163432-270294a2244d h1:7W/d4K3mS0E4no4QXOAYSq5EccmAr9bm31rlschIqE4=
+github.com/Dimoonevs/hls-parser v0.0.0-20250215163432-270294a2244d/go.mod h1:8bm/wcdMQZueWzVf7360XM11DTaTdeVbI69tnauoXao=
+github.com/Dimoonevs/hls-parser v0.0.0-20250216172043-ef1f57fd4ed5 h1:r/6eO/1hi05V6EWDQ5j7V8k4Q4UVdHy07Kcs4UcET/8=
+github.com/Dimoonevs/hls-parser v0.0.0-20250216172043-ef1f57fd4ed5/go.mod h1:8bm/wcdMQZueWzVf7360XM11DTaTdeVbI69tnauoXao=
+github.com/go-sql-driver/mysql v1.8.1 h1:LedoTUt/eveggdHS9qUFC1EFSa8bU2+1pZjSRpvNJ1Y=
+github.com/go-sql-driver/mysql v1.8.1/go.mod h1:wEBSXgmK//2ZFJyE+qWnIsVGmvmEKlqwuVSjsCm7DZg=
 github.com/vharitonsky/iniflags v0.0.0-20180513140207-a33cd0b5f3de h1:fkw+7JkxF3U1GzQoX9h69Wvtvxajo5Rbzy6+YMMzPIg=
 github.com/vharitonsky/iniflags v0.0.0-20180513140207-a33cd0b5f3de/go.mod h1:irMhzlTz8+fVFj6CH2AN2i+WI5S6wWFtK3MBCIxIpyI=
