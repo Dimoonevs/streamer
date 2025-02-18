@@ -28,14 +28,13 @@ func Run() error {
 	stream := utils.InitStream()
 	go func() {
 		log.Printf("Start streamer on port :%d\n", *portStreamer)
+		http.HandleFunc("/master.m3u8", stream.HandleMasterPlaylist)
 		http.HandleFunc("/", stream.HandlePlaylist)
 		log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", *portStreamer), nil))
 	}()
 	for {
 		for i := 0; i < len(ListVideo); i++ {
-			//log.Println("start video id:", i)
 			stream.StartStream(&ListVideo[i])
-			log.Println("return listVideo")
 		}
 	}
 }

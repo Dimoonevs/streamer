@@ -1,6 +1,8 @@
 package media
 
 import (
+	"flag"
+	"fmt"
 	"github.com/Dimoonevs/hls-parser/pkg/creator/hls"
 	_ "github.com/Dimoonevs/hls-parser/pkg/creator/hls"
 	"github.com/Dimoonevs/hls-parser/pkg/domain"
@@ -11,27 +13,29 @@ import (
 
 var (
 	countSegmentStream = 5
+	publicURLMPL       = flag.String("publicURLPlaylist", "", "link public playlist")
 )
 
 type MediaStreamer struct {
-	//StreamChan chan map[string]string
-	wg       *sync.WaitGroup
-	seqNo    int
-	Segments map[string]*domain.MediaPlaylist
-	mx       *sync.Mutex
+	wg             *sync.WaitGroup
+	seqNo          int
+	Segments       map[string]*domain.MediaPlaylist
+	MediaPlaylists []domain.MediaPlaylistForCreate
+	mx             *sync.Mutex
 }
 
 func InitMediaStreamer() *MediaStreamer {
 	return &MediaStreamer{
-		//StreamChan: make(chan map[string]string, 3),
-		wg:       &sync.WaitGroup{},
-		seqNo:    0,
-		Segments: make(map[string]*domain.MediaPlaylist),
-		mx:       &sync.Mutex{},
+		wg:             &sync.WaitGroup{},
+		seqNo:          0,
+		Segments:       make(map[string]*domain.MediaPlaylist),
+		mx:             &sync.Mutex{},
+		MediaPlaylists: []domain.MediaPlaylistForCreate{},
 	}
 }
 
 func (ms *MediaStreamer) CreateStreamMPL(playlists []*domain.MediaPlaylist) {
+	go ms.createLink()
 	if ms == nil {
 		log.Fatal("MediaStreamer is nil")
 	}
@@ -78,7 +82,7 @@ func (ms *MediaStreamer) slideAndStream(playlist *domain.MediaPlaylist) {
 		}
 		playlistStream.Segments = append(playlistStream.Segments, playlist.Segments[i])
 
-		if len(playlistStream.Segments) < countSegmentStream {
+		if len(playlistStream.Segments) < countSegmentStream && len(ms.Segments) < countSegmentStream {
 			continue
 		}
 		ms.mx.Lock()
@@ -97,4 +101,15 @@ func (ms *MediaStreamer) slideAndStream(playlist *domain.MediaPlaylist) {
 
 		playlistStream.SeqNo++
 	}
+}
+
+func (ms *MediaStreamer) createLink() {
+	ms.MediaPlaylists = []domain.MediaPlaylistForCreate{}
+	for _, mpl := range ms.Segments {
+		ms.MediaPlaylists = append(ms.MediaPlaylists, domain.MediaPlaylistForCreate{
+			MediaURL: fmt.Sprintf("%s/%s/playlist.m3u8", *publicURLMPL, mpl.Size),
+			Size:     mpl.Size,
+		})
+	}
+
 }

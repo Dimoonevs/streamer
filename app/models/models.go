@@ -5,6 +5,7 @@ type VideoFormat struct {
 	Resolution string `json:"size"`
 	Bitrate    int    `json:"bitrate"`
 }
+
 type Video struct {
 	ID       int            `json:"id"`
 	Formats  []*VideoFormat `json:"formats"`

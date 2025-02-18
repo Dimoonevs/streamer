@@ -76,3 +76,15 @@ func (s *Stream) HandlePlaylist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func (s *Stream) HandleMasterPlaylist(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/vnd.apple.mpegurl")
+
+	masterPlaylist := hls2.GenerateMasterPlaylist(s.ms.MediaPlaylists)
+
+	_, err := w.Write([]byte(masterPlaylist))
+	if err != nil {
+		log.Println("Ошибка при отправке мастер-плейлиста:", err)
+		return
+	}
+}

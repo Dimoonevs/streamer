@@ -40,12 +40,6 @@ func GetConnection() *Storage {
 	return storage
 }
 
-type formatJSON struct {
-	Size    string `json:"size"`
-	URL     string `json:"url"`
-	Bitrate int    `json:"bitrate"`
-}
-
 func (s *Storage) GetVideoContent() ([]models.Video, error) {
 	query := `
 		SELECT vf.id, vf.formats
