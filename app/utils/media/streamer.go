@@ -3,7 +3,6 @@ package media
 import (
 	"flag"
 	"fmt"
-	"github.com/Dimoonevs/hls-parser/pkg/creator/hls"
 	_ "github.com/Dimoonevs/hls-parser/pkg/creator/hls"
 	"github.com/Dimoonevs/hls-parser/pkg/domain"
 	"log"
@@ -96,11 +95,10 @@ func (ms *MediaStreamer) slideAndStream(playlist *domain.MediaPlaylist) {
 			totalDuration += int(segment.Duration)
 		}
 
-		streamPL := hls.GenerateMediaPlaylist(playlistStream)
-		log.Println(streamPL)
+		//streamPL := hls.GenerateMediaPlaylist(playlistStream)
+		//log.Println(streamPL)
 
-		//time.Sleep(time.Duration(totalDuration/countSegmentStream) * time.Second)
-		time.Sleep(2 * time.Second)
+		time.Sleep(time.Duration(totalDuration/countSegmentStream) * time.Second)
 
 		playlistStream.SeqNo++
 	}
