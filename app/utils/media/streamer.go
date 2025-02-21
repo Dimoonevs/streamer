@@ -51,7 +51,9 @@ func (ms *MediaStreamer) slideAndStream(playlist *domain.MediaPlaylist) {
 	if playlist == nil {
 		log.Fatal("playlist is nil")
 	}
+	ms.mx.Lock()
 	playlistStream, found := ms.Segments[playlist.Size]
+	ms.mx.Unlock()
 	if !found {
 		playlistStream = &domain.MediaPlaylist{
 			Size:           playlist.Size,
@@ -66,7 +68,7 @@ func (ms *MediaStreamer) slideAndStream(playlist *domain.MediaPlaylist) {
 		return
 	}
 
-	if len(playlist.Segments) < countSegmentStream {
+	if len(playlist.Segments) < countSegmentStream && len(playlistStream.Segments) < countSegmentStream {
 		for _, segment := range playlist.Segments {
 			playlistStream.Segments = append(playlistStream.Segments, segment)
 			ms.mx.Lock()
@@ -82,7 +84,7 @@ func (ms *MediaStreamer) slideAndStream(playlist *domain.MediaPlaylist) {
 		}
 		playlistStream.Segments = append(playlistStream.Segments, playlist.Segments[i])
 
-		if len(playlistStream.Segments) < countSegmentStream && len(ms.Segments) < countSegmentStream {
+		if len(playlistStream.Segments) < countSegmentStream {
 			continue
 		}
 		ms.mx.Lock()
@@ -97,7 +99,8 @@ func (ms *MediaStreamer) slideAndStream(playlist *domain.MediaPlaylist) {
 		streamPL := hls.GenerateMediaPlaylist(playlistStream)
 		log.Println(streamPL)
 
-		time.Sleep(time.Duration(totalDuration/countSegmentStream) * time.Second)
+		//time.Sleep(time.Duration(totalDuration/countSegmentStream) * time.Second)
+		time.Sleep(2 * time.Second)
 
 		playlistStream.SeqNo++
 	}
