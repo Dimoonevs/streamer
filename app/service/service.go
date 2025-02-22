@@ -3,14 +3,19 @@ package service
 import (
 	"flag"
 	"fmt"
+	"hls-streamer/app/models"
 	"hls-streamer/app/repo/mysql"
 	"hls-streamer/app/utils"
 	"log"
 	"net/http"
+	"sync"
+	"time"
 )
 
 var (
-	portStreamer = flag.Int("portStreamer", 8080, "The port streamer endpoint")
+	portStreamer   = flag.Int("portStreamer", 8080, "The port streamer endpoint")
+	listVideo      []models.Video
+	listVideoMutex sync.Mutex
 )
 
 type Segment struct {
@@ -19,7 +24,8 @@ type Segment struct {
 }
 
 func Run() error {
-	ListVideo, err := mysql.GetConnection().GetVideoContent()
+	var err error
+	listVideo, err = mysql.GetConnection().GetVideoContent()
 	if err != nil {
 		return err
 	}
@@ -32,9 +38,37 @@ func Run() error {
 		http.HandleFunc("/", stream.HandlePlaylist)
 		log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", *portStreamer), nil))
 	}()
+
+	go updateVideoListPeriodically()
+
 	for {
-		for i := 0; i < len(ListVideo); i++ {
-			stream.StartStream(&ListVideo[i])
+		listVideoMutex.Lock()
+		for _, video := range listVideo {
+			stream.StartStream(&video)
 		}
+		listVideoMutex.Unlock()
+	}
+}
+
+func updateVideoListPeriodically() {
+	ticker := time.NewTicker(2 * time.Minute)
+	defer ticker.Stop()
+
+	for {
+		<-ticker.C
+
+		log.Println("🔄 Start update Video")
+
+		newList, err := mysql.GetConnection().GetVideoContent()
+		if err != nil {
+			log.Printf("❌ Error get videos: %v", err)
+			continue
+		}
+
+		log.Println("Gets List Video")
+
+		listVideo = newList
+
+		log.Println("✅ List video Update successful")
 	}
 }

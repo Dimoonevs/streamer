@@ -47,6 +47,7 @@ func (s *Storage) GetVideoContent() ([]models.Video, error) {
 		JOIN files_j_video_formats fjvf ON vf.id = fjvf.video_format_id
 		JOIN files f ON fjvf.file_id = f.id
 		WHERE f.is_stream = 1
+		AND f.status != 'deleted'
 	`
 	rows, err := s.db.Query(query)
 	if err != nil {

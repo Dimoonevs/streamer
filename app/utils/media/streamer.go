@@ -106,11 +106,13 @@ func (ms *MediaStreamer) slideAndStream(playlist *domain.MediaPlaylist) {
 
 func (ms *MediaStreamer) createLink() {
 	ms.MediaPlaylists = []domain.MediaPlaylistForCreate{}
+	ms.mx.Lock()
 	for _, mpl := range ms.Segments {
 		ms.MediaPlaylists = append(ms.MediaPlaylists, domain.MediaPlaylistForCreate{
 			MediaURL: fmt.Sprintf("%s/%s/playlist.m3u8", *publicURLMPL, mpl.Size),
 			Size:     mpl.Size,
 		})
 	}
+	ms.mx.Unlock()
 
 }

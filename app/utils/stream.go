@@ -37,6 +37,10 @@ func (s *Stream) StartStream(videoContent *models.Video) {
 		go func(plstr *models.VideoFormat) {
 			defer wg.Done()
 			mpl, err := hls.ParseMediaPlaylist(plstr.URL)
+			if mpl == nil {
+				log.Println("mpl is nil, skipping")
+				return
+			}
 			mpl.Size = plstr.Resolution
 			if err != nil {
 				log.Fatal(err)
